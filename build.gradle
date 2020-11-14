@@ -1,0 +1,122 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.codehaus.groovy.modules.http-builder:http-builder:0.7.1")
+    }
+}
+
+wrapper {
+    distributionUrl = "${gradleWrapperUrl}"
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'jacoco'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group "${group}"
+version "${version}"
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'commons-codec:commons-codec:1.11'
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+ext {
+    set('springCloudVersion', "Hoxton.SR8")
+}
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+
+    runtimeOnly 'com.h2database:h2'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.0.Final'
+
+    /******************************************************
+     * mapstruct
+     ******************************************************/
+    compile group: 'org.mapstruct', name: 'mapstruct-jdk8', version: '1.2.0.Final'
+    compileOnly 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+
+    }
+    violationRules {
+        rule {
+            limit {
+                //The following configuration will enforce that 100% of the lines are executed during tests
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.8
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
+
+jacocoTestReport {
+    afterEvaluate {
+
+    }
+
+    reports {
+        xml.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/jacocoTestReport.xml")
+        csv.enabled true
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+sourceSets {
+    test {
+        groovy {
+            srcDirs = ['src/test/unit/groovy']
+        }
+    }
+}
+
+test {
+    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+}
