@@ -11,6 +11,7 @@ git clone https://github.com/sunilrai7607/mapstruct-friends-service.git
 MAC machine (IntelliJ click on terminal) 
 % chmod 777 ./gradlew
 % ./gradlew clean build
+% ./gradlew bootRun
 
 ```
 
