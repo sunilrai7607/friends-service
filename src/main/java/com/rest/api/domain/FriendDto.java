@@ -14,13 +14,10 @@ import lombok.NoArgsConstructor;
 public class FriendDto {
 
     public long id;
-
     public String firstName;
-
     public String lastName;
-
     public String emailId;
-
+    private String uuid;
     private String address1;
 
     private String address2;

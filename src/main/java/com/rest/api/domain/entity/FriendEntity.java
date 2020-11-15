@@ -17,6 +17,9 @@ public class FriendEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "uuid")
+    private String uuid;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 

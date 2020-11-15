@@ -19,5 +19,6 @@ public abstract class FriendDtoMapper implements BaseMapper<FriendEntity, Friend
     @Mapping(target = "address2", source = "input.address2")
     @Mapping(target = "zip", source = "input.zip")
     @Mapping(target = "state", source = "input.state")
+    @Mapping(target = "uuid", source = "input.uuid")
     public abstract FriendDto map(FriendEntity input);
 }
